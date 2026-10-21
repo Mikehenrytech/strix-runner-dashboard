@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+backend/.venv/
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+
+# Local configuration, secrets, and environment files
+.env
+.env.*
+config.json
+strix-config.json
+
+# Runtime output
+*.log
+logs/
+strix_runs/
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
