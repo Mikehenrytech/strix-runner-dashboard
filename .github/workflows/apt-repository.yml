@@ -39,11 +39,16 @@ jobs:
           chmod +x scripts/build-deb.sh
           ./scripts/build-deb.sh "${VERSION}"
 
-      - name: Upload release asset
+      - name: Create release and upload assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.version.outputs.VERSION }}
         run: |
+          if ! gh release view "v${VERSION}" > /dev/null 2>&1; then
+            gh release create "v${VERSION}" \
+              --title "v${VERSION}" \
+              --notes "Release v${VERSION}"
+          fi
           gh release upload "v${VERSION}" \
             "build/strix-runner-dashboard_${VERSION}-1_amd64.deb" \
             "build/strix-runner-dashboard_${VERSION}-1_amd64.deb.sha256" \
