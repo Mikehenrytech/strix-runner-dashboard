@@ -1,7 +1,0 @@
-#!/bin/sh
-set -e
-
-export STRIX_DASHBOARD_RUNNER="${STRIX_DASHBOARD_RUNNER:-/usr/lib/strix-runner/strix_runner.py}"
-export STRIX_DASHBOARD_FRONTEND="${STRIX_DASHBOARD_FRONTEND:-/opt/strix-runner-dashboard/frontend/dist}"
-
-exec /opt/strix-runner-dashboard/backend/.venv/bin/python -m strix_dashboard "$@"
