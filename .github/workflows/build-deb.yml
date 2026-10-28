@@ -1,0 +1,47 @@
+name: Build Debian Package
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_call:
+
+jobs:
+  build:
+    name: Build .deb package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Building version ${VERSION}"
+
+      - name: Build .deb
+        env:
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: |
+          chmod +x scripts/build-deb.sh
+          ./scripts/build-deb.sh "${VERSION}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: strix-runner-dashboard-deb
+          path: |
+            build/strix-runner-dashboard_*.deb
+            build/strix-runner-dashboard_*.deb.sha256

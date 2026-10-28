@@ -1,0 +1,12 @@
+Package: strix-runner-dashboard
+Version: {{VERSION}}
+Section: utils
+Priority: optional
+Architecture: amd64
+Depends: python3 (>= 3.10)
+Suggests: strix-runner
+Maintainer: Mikehenrytech <12794741+Mikehenrytech@users.noreply.github.com>
+Description: Read-only web dashboard for Strix execution history
+ Strix Runner Dashboard is a local read-only web interface for browsing
+ Strix execution history. It requires strix-runner to generate the
+ underlying history data.
