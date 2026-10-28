@@ -29,8 +29,13 @@ mkdir -p "${PKG_DIR}/opt/${PKG_NAME}/frontend"
 echo "Building frontend..."
 (
     cd "${FRONTEND_DIR}"
-    npm ci
-    npm run build
+    if command -v pnpm >/dev/null 2>&1; then
+        pnpm install --frozen-lockfile
+        pnpm run build
+    else
+        npm ci
+        npm run build
+    fi
 )
 
 # Copy backend source into the package first so the venv is self-contained
