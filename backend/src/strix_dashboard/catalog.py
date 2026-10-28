@@ -124,6 +124,19 @@ def _run_tokens(run: dict[str, Any]) -> int:
     return int(value) if isinstance(value, (int, float)) else 0
 
 
+def _run_models(run: dict[str, Any]) -> list[str]:
+    seen: set[str] = set()
+    models: list[str] = []
+    for agent in _as_list(run.get("agents")):
+        if not isinstance(agent, dict):
+            continue
+        model = agent.get("model")
+        if isinstance(model, str) and model and model not in seen:
+            seen.add(model)
+            models.append(model)
+    return models
+
+
 def _run_agents(run: dict[str, Any]) -> list[dict[str, Any]]:
     return [item for item in _as_list(run.get("agents")) if isinstance(item, dict)]
 
@@ -368,8 +381,10 @@ class HistoryCatalog:
                         "run_id": run.get("run_id"),
                         "run_name": run.get("run_name"),
                         "profile": _run_profile(run),
+                        "run_dir_relative": run.get("run_dir_relative"),
                         "targets": run.get("targets"),
                         "agents": agents,
+                        "models": _run_models(run),
                     },
                     ensure_ascii=False,
                 ).casefold()
@@ -420,6 +435,8 @@ class HistoryCatalog:
         result["report_url"] = (
             f"/api/v1/runs/{stable_id}/report" if report_available else None
         )
+        if "models" not in result:
+            result["models"] = _run_models(run)
         return result
 
     def report(self, stable_id: str) -> tuple[str, str]:
@@ -472,6 +489,7 @@ class HistoryCatalog:
             "run_id": run.get("run_id"),
             "run_name": run.get("run_name"),
             "profile": _run_profile(run),
+            "run_dir_relative": run.get("run_dir_relative"),
             "start_time": run.get("start_time"),
             "end_time": run.get("end_time"),
             "status": run.get("status"),
@@ -481,5 +499,6 @@ class HistoryCatalog:
             "agents": len(agents),
             "skills": len(skills),
             "total_tokens": _run_tokens(run),
+            "models": _run_models(run),
             "report_available": bool(run.get("report_path")),
         }

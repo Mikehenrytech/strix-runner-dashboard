@@ -111,6 +111,11 @@ function formatDuration(value: number | null): string {
   return `${minutes} min ${seconds} s`;
 }
 
+function formatModels(value: string[] | undefined): string {
+  if (!value || value.length === 0) return "—";
+  return value.join(", ");
+}
+
 function utilityLabel(value: string): string {
   const labels: Record<string, string> = {
     high: "Alta",
@@ -322,6 +327,8 @@ function Comparison({
               <div><dt>Duración</dt><dd>{formatDuration(run.duration_seconds)}</dd></div>
               <div><dt>Tokens</dt><dd>{numberFormat.format(run.total_tokens)}</dd></div>
               <div><dt>Skills</dt><dd>{run.skills}</dd></div>
+              <div><dt>Run Dir</dt><dd>{run.run_dir_relative ?? "—"}</dd></div>
+              <div><dt>Modelos</dt><dd>{formatModels(run.models)}</dd></div>
             </dl>
           </article>
         ))}
@@ -491,6 +498,7 @@ function RunsTable({
             <tr>
               <th>ID</th>
               <th>Aplicación / fecha</th>
+              <th>Run Dir</th>
               <th>Estado</th>
               <th>Hallazgos</th>
               <th>Duración</th>
@@ -501,7 +509,7 @@ function RunsTable({
           </thead>
           <tbody>
             {!loading && items.length === 0 && (
-              <tr><td colSpan={8} className="empty-table">No hay ejecuciones con estos filtros.</td></tr>
+              <tr><td colSpan={9} className="empty-table">No hay ejecuciones con estos filtros.</td></tr>
             )}
             {items.map((run) => (
               <tr key={run.stable_id}>
@@ -511,6 +519,9 @@ function RunsTable({
                     <strong>{run.profile}</strong>
                     <span>{formatDate(run.start_time)}</span>
                   </button>
+                </td>
+                <td className="run-dir-cell" title={run.run_dir_relative ?? undefined}>
+                  <span className="run-dir">{run.run_dir_relative ?? "—"}</span>
                 </td>
                 <td><span className={`status status-${run.status}`}>{statusLabel(run.status)}</span></td>
                 <td>
@@ -602,6 +613,10 @@ function DetailDrawer({ id, onClose }: { id: string | null; onClose: () => void 
                 <span className={`status status-${detail.status}`}>{statusLabel(detail.status)}</span>
                 <span>{formatDate(detail.start_time)}</span>
                 <span>{formatDuration(detail.duration_seconds)}</span>
+              </div>
+              <div className="drawer-meta secondary">
+                <span title="Run Dir">{detail.run_dir_relative ?? "—"}</span>
+                <span title="Modelos">{formatModels(detail.models)}</span>
               </div>
             </header>
             <div className="detail-metrics">
