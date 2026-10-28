@@ -9,6 +9,7 @@ backend/.venv/
 # Node / frontend
 frontend/node_modules/
 frontend/dist/
+frontend/package-lock.json
 
 # Local configuration, secrets, and environment files
 .env

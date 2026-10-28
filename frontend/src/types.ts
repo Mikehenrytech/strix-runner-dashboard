@@ -35,6 +35,7 @@ export interface RunListItem {
   run_id: string | null;
   run_name: string;
   profile: string;
+  run_dir_relative: string | null;
   start_time: string | null;
   end_time: string | null;
   status: string;
@@ -44,6 +45,7 @@ export interface RunListItem {
   agents: number;
   skills: number;
   total_tokens: number;
+  models: string[];
   report_available: boolean;
 }
 
@@ -89,6 +91,7 @@ export interface RunDetail {
   profile_label: string;
   profile_source: string;
   profile_candidates: string[];
+  run_dir_relative: string | null;
   start_time: string | null;
   end_time: string | null;
   status: string;
@@ -103,6 +106,7 @@ export interface RunDetail {
   command_gaps: string[];
   agents: HistoryAgent[];
   llm_usage: Record<string, number>;
+  models: string[];
   report_available: boolean;
   report_url: string | null;
 }

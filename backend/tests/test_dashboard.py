@@ -27,6 +27,7 @@ def sample_payload(run_dir: Path) -> dict[str, object]:
                 "run_id": "run-001",
                 "run_name": run_dir.name,
                 "run_dir": str(run_dir),
+                "run_dir_relative": "strix_runs/run-one",
                 "profile": "payments-api",
                 "profile_candidates": ["payments-api"],
                 "profile_source": "captured",
@@ -49,6 +50,7 @@ def sample_payload(run_dir: Path) -> dict[str, object]:
                         "name": "recon",
                         "status": "completed",
                         "task": "Mapear superficie",
+                        "model": "openai/gpt-4o",
                         "skills": [
                             {
                                 "name": "asset-discovery",
@@ -57,7 +59,14 @@ def sample_payload(run_dir: Path) -> dict[str, object]:
                                 "evidence": [],
                             }
                         ],
-                    }
+                    },
+                    {
+                        "agent_id": "agent-2",
+                        "name": "planner",
+                        "status": "completed",
+                        "model": "openai/gpt-4o-mini",
+                        "skills": [],
+                    },
                 ],
                 "llm_usage": {"total_tokens": 4200},
             },
@@ -161,6 +170,17 @@ class DashboardTests(unittest.TestCase):
         self.assertTrue(detail["report_available"])
         self.assertEqual(filename, "penetration_test_report.md")
         self.assertIn("Contenido seguro", content)
+        self.assertEqual(detail["run_dir_relative"], "strix_runs/run-one")
+        self.assertEqual(detail["models"], ["openai/gpt-4o", "openai/gpt-4o-mini"])
+
+    def test_list_exposes_run_dir_relative_and_models(self) -> None:
+        items = self.catalog.list_runs()["items"]
+        self.assertEqual(len(items), 2)
+        first, second = items
+        self.assertEqual(first["run_dir_relative"], "strix_runs/run-one")
+        self.assertEqual(first["models"], ["openai/gpt-4o", "openai/gpt-4o-mini"])
+        self.assertIsNone(second["run_dir_relative"])
+        self.assertEqual(second["models"], [])
 
     def test_report_rejects_path_outside_runs_root(self) -> None:
         outside = Path(self.temp_dir.name) / "outside.md"
